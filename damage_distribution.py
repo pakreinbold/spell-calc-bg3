@@ -1,7 +1,14 @@
+'''
+The following analytical results were largely based on the paper:
+
+Caiado, Camila CS, and Pushpa N. Rathie. "Polynomial coefficients and distribution of the
+    sum of discrete uniform variables." In Eighth Annual Conference of the Society of Special
+    Functions and their Applications, Pala, India, Society for Special Functions and their
+    Applications. 2007.
+'''
 # %%
 from math import floor, comb
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def poly_coeff(n, k, q):
@@ -9,12 +16,6 @@ def poly_coeff(n, k, q):
     Returns the Polynomial Coefficient (PC), defined as the coefficient for x^q resultant from the
     expression
         (1 + x + ... + x^k)^n.
-
-    Ref:
-        Caiado, Camila CS, and Pushpa N. Rathie. "Polynomial coefficients and distribution of the
-        sum of discrete uniform variables." In Eighth Annual Conference of the Society of Special
-        Functions and their Applications, Pala, India, Society for Special Functions and their
-        Applications. 2007.
 
     Args:
         n (int): The outer exponent; n >= 0
@@ -31,19 +32,9 @@ def poly_coeff(n, k, q):
     elif q == 0 and k == 0:
         return 1
 
-    # Avoid divsion by 0 errors
-    top = q * (k - 1)
-    bot = k
-    if bot == 0 & top == 0:
-        sum_lmt = 0
-    else:
-        sum_lmt = floor(top / bot)
-
     # Compute recursive loop(s)
     res = 0
-    for p in range(sum_lmt + 1):
-
-        # Add the next step
+    for p in range(floor(q * (k - 1) / k) + 1):
         res += comb(n, q - p) * poly_coeff(q - p, k - 1, p)
 
     return res
@@ -59,12 +50,6 @@ def distr_sdurv(n, k):
     Then the distribution of Y is given by
         P(Y=y) = poly_coeff(n, k, y) / (k + 1)^n
 
-    Ref:
-        Caiado, Camila CS, and Pushpa N. Rathie. "Polynomial coefficients and distribution of the
-        sum of discrete uniform variables." In Eighth Annual Conference of the Society of Special
-        Functions and their Applications, Pala, India, Society for Special Functions and their
-        Applications. 2007.
-
     Args:
         n (int): Number of discrete uniform random variables to sum.
         k (int): Size of space each discrete uniform random variable can draw from.
@@ -73,8 +58,11 @@ def distr_sdurv(n, k):
         (np.array): y
         (np.array): P(Y=y)
     '''
+    # All possibilities for y
     y = np.arange(0, n * k + 1)
-    p = [poly_coeff(n, k, y_) / (k + 1)**n for y_ in y]
+
+    # Compute each option
+    p = np.array([poly_coeff(n, k, y_) / (k + 1)**n for y_ in y])
     return y, p
 
 
@@ -90,15 +78,7 @@ def damage_distribution(dice, mod):
         (np.array): Damage outcome
         (np.array): Probability of damage outcome
     '''
-    n, k = dice.split('d')
+    n, k = [int(x) for x in dice.split('d')]
     dmg, prb = distr_sdurv(n, k - 1)
-    dmg += n
+    dmg += n + mod
     return dmg, prb
-
-
-# %% TEST PC
-n = 2  # number of dice
-k = 3  # size of dice
-y, p = distr_sdurv(n, k - 1)
-plt.plot(y + n, p, '-o')
-plt.show()
