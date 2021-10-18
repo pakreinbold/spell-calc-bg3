@@ -44,3 +44,6 @@ def cache_spells(spells, label='spells'):
         label (str): What to include in the save-name
     '''
     save_name = f'cache/{label}.csv'
+    spells.to_csv(save_name)
+
+    return save_name
