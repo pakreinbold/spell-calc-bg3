@@ -25,6 +25,9 @@ def poly_coeff(n, k, q):
     Returns:
         (int): The polynomial coefficient
     '''
+    if n < 0 or k < 0:
+        raise ValueError('Recieved negative inputs.')
+
     # Check recursion bounds
     if q < 0 or q > (n * k):
         return 0
