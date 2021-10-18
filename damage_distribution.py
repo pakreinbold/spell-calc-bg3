@@ -6,7 +6,6 @@ Caiado, Camila CS, and Pushpa N. Rathie. "Polynomial coefficients and distributi
     Functions and their Applications, Pala, India, Society for Special Functions and their
     Applications. 2007.
 '''
-# %%
 from math import floor, comb
 import numpy as np
 
@@ -66,7 +65,7 @@ def distr_sdurv(n, k):
     return y, p
 
 
-def damage_distribution(dice, mod):
+def dmg_distr(dice, mod):
     '''
     Returns the damage distribution of a spell/ability assuming that it hits the target.
 
@@ -78,7 +77,13 @@ def damage_distribution(dice, mod):
         (np.array): Damage outcome
         (np.array): Probability of damage outcome
     '''
+    # Decode the dice input
     n, k = [int(x) for x in dice.split('d')]
+
+    # Get the distribution
     dmg, prb = distr_sdurv(n, k - 1)
+
+    # Shift the damage & apply modifier
     dmg += n + mod
+
     return dmg, prb
