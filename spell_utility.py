@@ -44,6 +44,23 @@ def cache_spells(spells, label='spells'):
         label (str): What to include in the save-name
     '''
     save_name = f'cache/{label}.csv'
-    spells.to_csv(save_name)
+    spells.to_csv(save_name, index=False)
 
     return save_name
+
+
+def load_cached_spells(label='spells'):
+    '''
+    Load the labeled spells from the cache.
+
+    Args:
+        label (str): The identifying part of the filename
+
+    Returns:
+        (pd.DataFrame): The table containg the spells, their descriptions, etc.
+    '''
+    # Get the DataFrame from the cache
+    file_name = f'cache/{label}.csv'
+    spells = pd.read_csv(file_name)
+
+    return spells
