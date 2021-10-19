@@ -64,3 +64,28 @@ def load_cached_spells(label='spells'):
     spells = pd.read_csv(file_name)
 
     return spells
+
+
+def process_description(description):
+    '''
+    Find how much damage a spell does, whether it's a ranged attack or has a saving throw, whether
+    it deals half-damage if the enemy saves, what type of damage it is (fire, thunder, etc.), what
+    the saving ability is (strength, constitution, etc.), what ability score the spell recieves
+    modifying damage from, etc.
+
+    Args:
+        description (str): The full description of the spells effect
+
+    Returns:
+        (str): Should be of the form "XdY" if the spell does damage, or None if it is not a
+            damage-dealing spell.
+        (str): Type of spell; should be "Ranged Attack" or "Saving Throw"
+        (bool): Whether or not the spell does half-damage even if the enemy saves
+        (str): Damage type (e.g., fire, thunder, frost, piercing, etc.)
+        (str): Saving ability (e.g., constitution, charisma, etc.)
+        (str): Modifying ability (e.g., wisdom, intelligence, etc.)
+    '''
+    # TODO: Use key-words "deals", "takes" to distinguish damage dealing spells from heals
+    # TODO: Use regex to search for "XdY" pattern
+    # TODO: Use regex to find 'half-damage'
+    # TODO: Search for damage type key-words
