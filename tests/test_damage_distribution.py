@@ -1,6 +1,8 @@
 from math import comb
 import numpy as np
-from damage_distribution import poly_coeff, distr_sdurv, dmg_distr
+from damage_distribution import (
+    poly_coeff, distr_sdurv, dmg_distr, half_distr, adjusted_distr
+)
 
 
 def test_poly_coeff():
@@ -39,7 +41,7 @@ def test_distr_sdurv():
 
 
 def test_dmg_distr():
-    dmg, prb = dmg_distr('3d10', 4)
+    dmg, prb = dmg_distr('3d10', mod=4)
 
     # Check that the min/max damage is correct
     assert dmg.min() == 7
@@ -50,3 +52,60 @@ def test_dmg_distr():
 
     # Make sure that the outputs are the same size
     assert len(dmg) == len(prb)
+
+
+def test_half_distr():
+    dmg, prb = dmg_distr('3d8')
+    hlf_dmg, hlf_prb = half_distr(dmg, prb)
+
+    # Check that the min/max damage is correct
+    assert hlf_dmg.min() == 1
+    assert hlf_dmg.max() == 12
+
+    # Check that the probability is normalized
+    assert np.abs(hlf_prb.sum() - 1) < 1e-10
+
+    # Make sure that the outputs are the same size
+    assert len(hlf_dmg) == len(hlf_prb)
+
+    # Make sure that all the abscissae are integers
+    assert hlf_dmg.dtype == int
+
+    # Make sure that there are no duplicate abscissae
+    assert len(np.unique(hlf_dmg)) == len(hlf_dmg)
+
+    # Make sure that the probabilities make sense
+    assert np.all(hlf_prb >= 0)
+    assert np.all(hlf_prb <= 1)
+
+
+def test_adjusted_distr():
+    # Check with half damage first
+    damage, prob = adjusted_distr('2d10', hit_chance=0.75, half_damage=True)
+
+    # Check that the damage bounds make sense
+    assert damage.min() == 1
+    assert damage.max() == 20
+
+    # Check that the probability is normalized
+    assert np.abs(prob.sum() - 1) < 1e-10
+
+    # Check typing
+    assert damage.dtype == int
+
+    # Check with no half damage & modifier
+    damage, prob = adjusted_distr('4d6', mod=3, hit_chance=0.9)
+
+    # Check the bounds
+    assert damage.min() == 0
+    assert damage.max() == 27
+
+    # Check that the pieces matchup
+    assert np.abs(prob[0] - 0.1) < 1e-10
+    assert np.abs(prob[1:].sum() - 0.9) < 1e-10
+
+    # Check normalization
+    assert np.abs(prob.sum() - 1) < 1e-10
+
+    # Check the typing
+    assert damage.dtype == int

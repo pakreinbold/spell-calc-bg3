@@ -106,7 +106,7 @@ def half_distr(dmg, prb):
         hlf_dmg (np.array): The options of half-damage
         hlf_prb (np.array): The probability assigned to each half-damage option
     '''
-    hlf_dmg = np.unique(np.floor(dmg / 2))
+    hlf_dmg = np.unique(np.floor(dmg / 2)).astype(int)
     hlf_prb = np.zeros(hlf_dmg.shape)
 
     # All dice are even, so the last probability is always mapped to only one value

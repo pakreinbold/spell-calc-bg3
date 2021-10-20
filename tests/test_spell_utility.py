@@ -1,7 +1,9 @@
 import os
 import glob
 import pandas as pd
-from spell_utility import scrape_spells_fextralife, cache_spells
+from spell_utility import (
+    scrape_spells_fextralife, cache_spells, process_description
+)
 
 
 def list3(*args, **kwargs):
@@ -32,3 +34,19 @@ def test_cache_spells():
 
     # Remove the mock csv
     os.remove('cache/mock.csv')
+
+
+def test_process_description():
+    # Make some fake description
+    description = 'Summon Yeeter McYeeterson to assail your foes ' \
+        + 'for 3d20 penetrating damage. On a successful save, the creature only takes half ' \
+        + 'damage. Attack/Save: Ranged Attack Range: 333m/999ft'
+
+    # Process the description
+    dice_roll, damage_type, attack_type, half_damage = process_description(description)
+
+    # Check that the information is gathered correctly
+    assert dice_roll == '3d20'
+    assert damage_type == 'penetrating'
+    assert attack_type == 'ranged'
+    assert half_damage is True
