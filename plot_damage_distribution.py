@@ -1,10 +1,15 @@
 # %%
 import matplotlib.pyplot as plt
-from damage_distribution import dmg_distr
+from damage_distribution import adjusted_distr
 
-dmg, prb = dmg_distr('3d10', 0)
-plt.plot(dmg, prb, '-o')
-plt.xlabel('Damage')
-plt.ylabel('Probability')
-plt.xticks(dmg[::4], [int(x) for x in dmg[::4]])
-plt.show()
+
+def plot_dmg_distr(dice, modifier=0, hit_chance=1, half_damage=False):
+    # Get distribution if it hits
+    dmg, prb = adjusted_distr(dice, modifier, hit_chance=hit_chance, half_damage=half_damage)
+
+    # Do the plotting
+    plt.plot(dmg, prb, '-o')
+    plt.xlabel('Damage')
+    plt.ylabel('Probability')
+    plt.xticks(dmg[::4], [int(x) for x in dmg[::4]])
+    plt.show()
