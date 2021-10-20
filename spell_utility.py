@@ -1,5 +1,6 @@
 # %%
 import pandas as pd
+import re
 
 
 def scrape_spells_fextralife():
@@ -85,7 +86,42 @@ def process_description(description):
         (str): Saving ability (e.g., constitution, charisma, etc.)
         (str): Modifying ability (e.g., wisdom, intelligence, etc.)
     '''
-    # TODO: Use key-words "deals", "takes" to distinguish damage dealing spells from heals
-    # TODO: Use regex to search for "XdY" pattern
     # TODO: Use regex to find 'half-damage'
-    # TODO: Search for damage type key-words
+
+    # Initialize
+    dice_roll = None
+    damage_type = None
+    attack_type = None
+    half_damage = False
+
+    # Convert to lower-case for easier processing
+    txt = description.lower()
+
+    # If match XdY ZZZ pattern, return list of matches; else, None
+    dice_pat = re.findall('[0-9]*d[0-9]+ [a-z]+', txt)
+    if len(dice_pat) > 0:
+
+        # If only one match, take first
+        if len(dice_pat) == 1:
+            dice_pat = dice_pat[0].split()
+
+        # Ignore first match, since it has strange typing
+        else:
+            dice_pat = dice_pat[1].split()
+
+        dice_roll = dice_pat[0]
+        damage_type = dice_pat[1]
+
+    # Search for the attack type
+    att_pat = re.findall('attack/save: [a-z]+', txt)
+    if len(att_pat) > 0:
+
+        # If a match is found, need to remove 'attack/save:' from it
+        attack_type = att_pat[0].split(': ')[1]
+
+    # Search for "half damage"
+    half_pat = re.findall('half damage', txt)
+    if len(half_pat) > 0:
+        half_damage = True
+
+    return dice_roll, damage_type, attack_type, half_damage
