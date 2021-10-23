@@ -1,7 +1,8 @@
 from math import comb
 import numpy as np
-from damage_distribution import (
-    poly_coeff, distr_sdurv, dmg_distr, half_distr, adjusted_distr
+from stats import (
+    poly_coeff, distr_sdurv, dmg_distr, half_distr, adjusted_distr,
+    get_stats
 )
 
 
@@ -109,3 +110,19 @@ def test_adjusted_distr():
 
     # Check the typing
     assert damage.dtype == int
+
+
+def test_get_stats():
+    # Make some mock data
+    dmg = np.arange(1, 21)
+    prb = 0.05 * np.ones(dmg.shape)
+
+    # Call the tested-function
+    ev, min7, min9, max7, max9 = get_stats(dmg, prb)
+
+    # Check that the values are as expected
+    assert np.abs(ev - 10.5) < 1e-10
+    assert np.abs(min7 - 6) < 1e-10
+    assert np.abs(min9 - 2) < 1e-10
+    assert np.abs(max7 - 14) < 1e-10
+    assert np.abs(max9 - 18) < 1e-10

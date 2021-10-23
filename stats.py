@@ -154,3 +154,27 @@ def adjusted_distr(dice, mod=0, hit_chance=1, half_damage=False):
         prob = np.hstack([1 - hit_chance, hit_chance * raw_prb])
 
     return damage, prob
+
+
+def get_stats(dmg, prb):
+    '''
+    Get important stats:
+        1. Expected Value
+        2. Damage s.t. P[x > Damage] = 0.7 (i.e., P[x < Damage] = 0.3)
+        3. Damage s.t. P[x > Damage] = 0.9
+        4. y s.t. P[x < y] = 0.7
+        5. y s.t. P[x < y] = 0.9
+    from the input distribution.
+    '''
+    # Prepare the distribution variables
+    combo = dmg * prb
+    cs = np.cumsum(prb)
+
+    # Compute the statistics
+    ev = np.sum(combo)
+    min7 = np.interp(0.3, cs, dmg)
+    min9 = np.interp(0.1, cs, dmg)
+    max7 = np.interp(0.7, cs, dmg)
+    max9 = np.interp(0.9, cs, dmg)
+
+    return ev, min7, min9, max7, max9

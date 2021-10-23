@@ -2,7 +2,7 @@ import os
 import glob
 import pandas as pd
 from pandas._testing import assert_frame_equal
-from spell_utility import (
+from utility import (
     load_cached_spells, scrape_spells_fextralife, cache_spells, process_description
 )
 
