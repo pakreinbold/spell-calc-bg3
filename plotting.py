@@ -28,10 +28,10 @@ def plot_spells(label='spells'):
     spells = load_cached_spells(label=label)
     spells = spells[~spells['Dice'].isna()]
 
-    @interact(x=spells['Name'].tolist(), y=(0, 1, 0.05))
-    def plot_spell(x, y):
+    @interact(spell=spells['Name'].tolist(), hit_chance=(0, 1, 0.05))
+    def plot_spell(spell, hit_chance):
 
-        dice = spells[spells['Name'] == x]['Dice'].iloc[0]
-        half_damage = spells[spells['Name'] == x]['Half Damage'].iloc[0]
+        dice = spells[spells['Name'] == spell]['Dice'].iloc[0]
+        half_damage = spells[spells['Name'] == spell]['Half Damage'].iloc[0]
 
-        plot_dmg_distr(dice, hit_chance=y, half_damage=half_damage)
+        plot_dmg_distr(dice, hit_chance=hit_chance, half_damage=half_damage)
